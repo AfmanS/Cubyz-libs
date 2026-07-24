@@ -267,10 +267,15 @@ pub fn addVulkanApple(b: *std.Build, step: *std.Build.Step, c_lib: *std.Build.St
 }
 
 pub fn makeVulkanLayers(b: *std.Build, parentStep: *std.Build.Step, name: []const u8, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode, flags: []const []const u8, replace_tool: *std.Build.Step.Compile) !void {
-	const layerslib = b.addLibrary(.{.name = "VkLayer_khronos_validation", .root_module = b.createModule(.{
-		.target = target,
-		.optimize = optimize,
-	}), .linkage = .dynamic});
+	const layerslib = b.addLibrary(.{
+		.name = "VkLayer_khronos_validation",
+		.root_module = b.createModule(.{
+			.target = target,
+			.optimize = optimize,
+			.pic = true, // Needed for thread sanitizer
+		}),
+		.linkage = .dynamic,
+	});
 
 	const headers = b.dependency("Vulkan-Headers", .{});
 	const validationLayers = b.dependency("Vulkan-ValidationLayers", .{});
@@ -753,10 +758,14 @@ pub inline fn addHeaderOnlyLibs(b: *std.Build, c_lib: *std.Build.Step.Compile, f
 }
 
 pub inline fn makeCubyzLibs(b: *std.Build, step: *std.Build.Step, name: []const u8, target: std.Build.ResolvedTarget, optimize: std.builtin.OptimizeMode, flags: []const []const u8, replace_tool: *std.Build.Step.Compile) !*std.Build.Step.Compile {
-	const c_lib = b.addLibrary(.{.name = name, .root_module = b.createModule(.{
-		.target = target,
-		.optimize = optimize,
-	})});
+	const c_lib = b.addLibrary(.{
+		.name = name,
+		.root_module = b.createModule(.{
+			.target = target,
+			.optimize = optimize,
+			.pic = true, // Needed for thread sanitizer
+		}),
+	});
 
 	// NOTE(blackedout): To cross compile on macOS to macOS, the SDK has to be set correctly
 	if (builtin.os.tag == .macos and target.result.os.tag == .macos) {
@@ -802,13 +811,11 @@ pub inline fn makeCubyzLibs(b: *std.Build, step: *std.Build.Step, name: []const 
 	const options = std.Build.Step.InstallArtifact.Options{
 		.dest_dir = .{.override = .{.custom = b.fmt("lib/{s}", .{name})}},
 	};
-	step.dependOn(&b.addInstallArtifact(glslang.artifact("glslang"), options).step);
-	step.dependOn(&b.addInstallArtifact(glslang.artifact("MachineIndependent"), options).step);
-	step.dependOn(&b.addInstallArtifact(glslang.artifact("GenericCodeGen"), options).step);
-	step.dependOn(&b.addInstallArtifact(glslang.artifact("glslang-default-resource-limits"), options).step);
-	step.dependOn(&b.addInstallArtifact(glslang.artifact("SPIRV"), options).step);
-	step.dependOn(&b.addInstallArtifact(glslang.artifact("SPIRV-Tools"), options).step);
-	step.dependOn(&b.addInstallArtifact(glslang.artifact("SPIRV-Tools-opt"), options).step);
+	inline for (.{"glslang", "MachineIndependent", "GenericCodeGen", "glslang-default-resource-limits", "SPIRV", "SPIRV-Tools", "SPIRV-Tools-opt"}) |artifactName| {
+		const artifact = glslang.artifact(artifactName);
+		artifact.root_module.pic = true; // Needed for thread sanitizer
+		step.dependOn(&b.addInstallArtifact(artifact, options).step);
+	}
 
 	return c_lib;
 }
