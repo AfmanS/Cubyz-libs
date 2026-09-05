@@ -5,8 +5,8 @@
 	.paths = .{""},
 	.dependencies = .{
 		.glfw = .{
-			.url = "https://github.com/glfw/glfw/archive/refs/tags/3.4.tar.gz",
-			.hash = "N-V-__8AAL40TADEbrysYHBl-UIZO4KiG4chP8pLDVDINGH4",
+			.url = "https://github.com/glfw/glfw/archive/refs/tags/3.5.1.tar.gz",
+			.hash = "N-V-__8AAFAoSgCaIXvRyU85vZ0bKDcZLaUHWrojNKxEio2r",
 		},
 		.harfbuzz = .{
 			.url = "https://github.com/harfbuzz/harfbuzz/archive/refs/tags/14.2.0.tar.gz",
@@ -29,8 +29,8 @@
 			.hash = "N-V-__8AAJT_kQD6CFBMUVgvy7My2RpKDIGBj0RasjO4C2io",
 		},
 		.@"MoltenVK-macos" = .{
-			.url = "https://github.com/KhronosGroup/MoltenVK/releases/download/v1.4.1/MoltenVK-macos.tar",
-			.hash = "N-V-__8AACUMVgOPCw3yl1KPWIkLS6xEGBjWnZgoMvNigQmj",
+			.url = "https://github.com/KhronosGroup/MoltenVK/releases/download/v1.4.2/MoltenVK-macos.tar",
+			.hash = "",
 		},
 		.@"Vulkan-Utility-Libraries" = .{
 			.url = "https://github.com/KhronosGroup/Vulkan-Utility-Libraries/archive/refs/tags/v1.4.350.tar.gz",
@@ -49,16 +49,16 @@
 			.hash = "N-V-__8AAKFjBABZzn84N4iiLQyNQSMVsv5XBJSvZTPcQL2H",
 		},
 		.miniaudio = .{
-			.url = "https://github.com/mackron/miniaudio/archive/refs/tags/0.11.23.tar.gz",
-			.hash = "N-V-__8AAPu4vwC_P5AHlL_kEON58uGgrDcJSjGq9Hc5yadh",
+			.url = "https://github.com/mackron/miniaudio/archive/refs/tags/0.11.25.tar.gz",
+			.hash = "N-V-__8AAHNWwAASlNuYbrP1-3UqXdwbYvZ_6nIJhpAcRMfi",
 		},
 		.mbedtls = .{
-			.url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/mbedtls-4.0.0.tar.gz",
-			.hash = "N-V-__8AAKIwiADtY89ifMh8C6X0PHvyBULclU19OYMsiDg_",
+			.url = "https://github.com/Mbed-TLS/mbedtls/archive/refs/tags/mbedtls-4.2.0.tar.gz",
+			.hash = "N-V-__8AAJhTfgBPRDWtgTyDyZti3tWUN0LHXW3ZIPsN1Ye2",
 		},
 		.tf_psa_crypto = .{
-			.url = "https://github.com/Mbed-TLS/TF-PSA-Crypto/archive/refs/tags/tf-psa-crypto-1.0.0.tar.gz",
-			.hash = "N-V-__8AAOuqOgGAlxfU32chMWurMwBPZACZk-9MdknRMDIM",
+			.url = "https://github.com/Mbed-TLS/TF-PSA-Crypto/archive/refs/tags/tf-psa-crypto-1.2.0.tar.gz",
+			.hash = "N-V-__8AAErdYAGS61CAz9AxQqB_tgHGld7kzql7ImHiDkj-",
 		},
 		.stb = .{
 			.url = "https://github.com/nothings/stb/archive/31c1ad37456438565541f4919958214b6e762fb4.tar.gz",
