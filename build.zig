@@ -87,9 +87,11 @@ const freetypeSources = [_][]const u8{
 const tfPsaCryptoCoreSources: []const []const u8 = &.{
 	"psa_crypto.c",
 	"psa_crypto_client.c",
+	"psa_crypto_random.c",
 	"psa_crypto_slot_management.c",
 	"psa_crypto_storage.c",
 	"psa_its_file.c",
+	"psa_util.c",
 	"tf_psa_crypto_config.c",
 	"tf_psa_crypto_version.c",
 };
@@ -99,9 +101,6 @@ const tfPsaCryptoDriverSources: []const []const u8 = &.{
 	"aesce.c",
 	"aesni.c",
 	"aria.c",
-	"asn1parse.c",
-	"asn1write.c",
-	"base64.c",
 	"bignum.c",
 	"bignum_core.c",
 	"bignum_mod.c",
@@ -110,39 +109,21 @@ const tfPsaCryptoDriverSources: []const []const u8 = &.{
 	"camellia.c",
 	"ccm.c",
 	"chacha20.c",
+	"chacha20_neon.c",
 	"chachapoly.c",
 	"cipher.c",
 	"cipher_wrap.c",
 	"cmac.c",
-	"constant_time.c",
 	"ctr_drbg.c",
-	"ecdh.c",
 	"ecdsa.c",
 	"ecjpake.c",
 	"ecp.c",
 	"ecp_curves.c",
-	"ecp_curves_new.c",
 	"entropy.c",
 	"entropy_poll.c",
 	"gcm.c",
 	"hmac_drbg.c",
-	"lmots.c",
-	"lms.c",
-	"md.c",
 	"md5.c",
-	"memory_buffer_alloc.c",
-	"nist_kw.c",
-	"oid.c",
-	"pem.c",
-	"pk.c",
-	"pk_ecc.c",
-	"pk_rsa.c",
-	"pk_wrap.c",
-	"pkcs5.c",
-	"pkparse.c",
-	"pkwrite.c",
-	"platform.c",
-	"platform_util.c",
 	"poly1305.c",
 	"psa_crypto_aead.c",
 	"psa_crypto_cipher.c",
@@ -152,7 +133,8 @@ const tfPsaCryptoDriverSources: []const []const u8 = &.{
 	"psa_crypto_mac.c",
 	"psa_crypto_pake.c",
 	"psa_crypto_rsa.c",
-	"psa_util.c",
+	"psa_crypto_xof.c",
+	"psa_util_internal.c",
 	"ripemd160.c",
 	"rsa.c",
 	"rsa_alt_helpers.c",
@@ -160,7 +142,36 @@ const tfPsaCryptoDriverSources: []const []const u8 = &.{
 	"sha256.c",
 	"sha3.c",
 	"sha512.c",
+};
+
+const tfPsaCryptoExtraSources: []const []const u8 = &.{
+	"lmots.c",
+	"lms.c",
+	"md.c",
+	"nist_kw.c",
+	"pk.c",
+	"pk_ecc.c",
+	"pk_rsa.c",
+	"pk_wrap.c",
+	"pkparse.c",
+	"pkwrite.c",
+};
+
+const tfPsaCryptoPlatformSources: []const []const u8 = &.{
+	"memory_buffer_alloc.c",
+	"platform.c",
+	"platform_util.c",
 	"threading.c",
+};
+
+const tfPsaCryptoUtilitySources: []const []const u8 = &.{
+	"asn1parse.c",
+	"asn1write.c",
+	"base64.c",
+	"constant_time.c",
+	"oid.c",
+	"pem.c",
+	"pkcs5.c",
 };
 
 const mbedTlsSources: []const []const u8 = &.{
@@ -714,6 +725,21 @@ pub fn addMbedTls(b: *std.Build, c_lib: *std.Build.Step.Compile, flags: []const 
 		.files = tfPsaCryptoDriverSources,
 		.flags = flags,
 	});
+	c_lib.root_module.addCSourceFiles(.{
+		.root = tfPsaCrypto.path("extras"),
+		.files = tfPsaCryptoExtraSources,
+		.flags = flags,
+	});
+	c_lib.root_module.addCSourceFiles(.{
+		.root = tfPsaCrypto.path("platform"),
+		.files = tfPsaCryptoPlatformSources,
+		.flags = flags,
+	});
+	c_lib.root_module.addCSourceFiles(.{
+		.root = tfPsaCrypto.path("utilities"),
+		.files = tfPsaCryptoUtilitySources,
+		.flags = flags,
+	});
 	c_lib.root_module.addCSourceFile(.{
 		.file = b.path("lib/tf_psa_crypto/psa_crypto_driver_wrappers_no_static.c"), // Generated file
 		.flags = flags,
@@ -727,9 +753,13 @@ pub fn addMbedTls(b: *std.Build, c_lib: *std.Build.Step.Compile, flags: []const 
 	c_lib.root_module.addIncludePath(b.path("lib/mbedtls")); // Contains generated files
 	c_lib.root_module.addIncludePath(tfPsaCrypto.path("core"));
 	c_lib.root_module.addIncludePath(tfPsaCrypto.path("drivers/builtin/src"));
+	c_lib.root_module.addIncludePath(tfPsaCrypto.path("extras"));
+	c_lib.root_module.addIncludePath(tfPsaCrypto.path("platform"));
+	c_lib.root_module.addIncludePath(tfPsaCrypto.path("utilities"));
 	c_lib.root_module.addIncludePath(tfPsaCrypto.path("include"));
 	c_lib.root_module.addIncludePath(tfPsaCrypto.path("drivers/builtin/include"));
 	c_lib.root_module.addIncludePath(mbedtls.path("include"));
+	c_lib.root_module.addIncludePath(mbedtls.path("library"));
 	c_lib.installHeadersDirectory(mbedtls.path("include"), "", .{});
 	c_lib.installHeadersDirectory(tfPsaCrypto.path("include"), "", .{});
 	c_lib.installHeadersDirectory(tfPsaCrypto.path("drivers/builtin/include"), "", .{});
